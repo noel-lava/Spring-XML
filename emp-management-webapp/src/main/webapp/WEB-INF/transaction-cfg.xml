@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd        
+          					       http://www.springframework.org/schema/tx
+          					       http://www.springframework.org/schema/tx/spring-tx.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop.xsd">
+	<import resource="hiber-cfg.xml"/>
+
+	<!-- <tx:annotation-driven proxy-target-class="true" transaction-manager="txManager"/>	 -->
+
+  <tx:advice id="txAdvice" transaction-manager="txManager">
+    <tx:attributes>
+      <tx:method name="*"/>
+    </tx:attributes>
+  </tx:advice>
+
+  <aop:config>
+
+    <aop:pointcut id = "daoOperations" expression = "execution(* com.jlava.dao.*.*(..))"/>
+    <aop:advisor advice-ref = "txAdvice" pointcut-ref = "daoOperations"/>
+  </aop:config>  
+
+	<bean id="txManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+     <property name="sessionFactory" ref="mySessionFactory"/>
+ 	</bean>
+
+</beans>
